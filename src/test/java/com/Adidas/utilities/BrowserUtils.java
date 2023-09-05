@@ -1,4 +1,4 @@
-package com.Amazon.utilities;
+package com.Adidas.utilities;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;

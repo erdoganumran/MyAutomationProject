@@ -1,4 +1,4 @@
-package com.Amazon.utilities;
+package com.Adidas.utilities;
 import org.apache.poi.ss.usermodel.*;
 import org.testng.Assert;
 
