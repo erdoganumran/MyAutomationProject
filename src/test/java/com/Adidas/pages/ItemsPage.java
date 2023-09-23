@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ItemsPage extends BasePage{
+public class ItemsPage extends BasePage {
 
     @FindBy(className = "hrefch")
     public WebElement phonesList;

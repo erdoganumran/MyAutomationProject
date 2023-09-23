@@ -3,37 +3,44 @@ package com.Adidas.utilities;
 import io.github.bonigarcia.wdm.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
-import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.*;
 import org.openqa.selenium.firefox.*;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.*;
 import org.openqa.selenium.safari.SafariDriver;
-import java.util.concurrent.TimeUnit;
+
+import java.net.*;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class Driver {
+
     /*
- Creating a private constructor, so we are closing
- access to the object of this class from outside the class
-  */
+    Creating a private constructor, so we are closing
+    access to the object of this class from outside the class
+     */
     private Driver(){}
 
     /*
     We make WebDriver private, because we want to close access from outside the class.
     We make it static because we will use it in a static method.
      */
-    private static WebDriver driver; // value is null by default
+    //private static WebDriver driver; // value is null by default
+
+    private static InheritableThreadLocal<WebDriver> driverPool = new InheritableThreadLocal<>();
 
     /*
     Create a re-usable utility method which will return same driver instance when we call it
      */
-    public static WebDriver get(){
+    public synchronized static WebDriver get(){
 
-        if (driver == null){
+        if (driverPool.get() == null){
 
             /*
             We read our browserType from configuration.properties.
             This way, we can control which browser is opened from outside our code, from configuration.properties.
              */
-            String browser = ConfigurationReader.get("browser");
+            String browser = System.getProperty("browser") != null ? browser = System.getProperty("browser") : ConfigurationReader.get("browser");
 
             /*
                 Depending on the browserType that will be return from configuration.properties file
@@ -42,70 +49,109 @@ public class Driver {
             switch (browser){
                 case "chrome":
                     WebDriverManager.chromedriver().setup();
-
                     ChromeOptions options = new ChromeOptions();
                     options.addArguments("--remote-allow-origins=*");
-                    driver = new ChromeDriver(options);
-
-                    driver.manage().window().maximize();
-                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    driverPool.set(new ChromeDriver(options));
+                    driverPool.get().manage().window().maximize();
+                    driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
                     break;
                 case "chrome-headless":
                     WebDriverManager.chromedriver().setup();
-                    driver = new ChromeDriver(new ChromeOptions().setHeadless(true));
-                    driver.manage().window().maximize();
-                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    driverPool.set(new ChromeDriver(new ChromeOptions().setHeadless(true)));
+                    driverPool.get().manage().window().maximize();
+                    driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
                     break;
                 case "firefox":
                     WebDriverManager.firefoxdriver().setup();
-                    driver = new FirefoxDriver();
-                    driver.manage().window().maximize();
-                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-                    break;
-                case "firefox-headless":
-                    WebDriverManager.firefoxdriver().setup();
-                    driver = new FirefoxDriver(new FirefoxOptions().setHeadless(true));
-                    driver.manage().window().maximize();
-                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-                    break;
-                case "ie":
-                    if (!System.getProperty("os.name").toLowerCase().contains("windows"))
-                        throw new WebDriverException("Your OS doesn't support Internet Explorer");
-                    WebDriverManager.iedriver().setup();
-                    driver = new InternetExplorerDriver();
-                    driver.manage().window().maximize();
-                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    driverPool.set(new FirefoxDriver());
+                    driverPool.get().manage().window().maximize();
+                    driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
                     break;
                 case "edge":
                     if (!System.getProperty("os.name").toLowerCase().contains("windows"))
                         throw new WebDriverException("Your OS doesn't support Edge");
                     WebDriverManager.edgedriver().setup();
-                    driver = new EdgeDriver();
-                    driver.manage().window().maximize();
-                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    driverPool.set(new EdgeDriver());
+                    driverPool.get().manage().window().maximize();
+                    driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
                     break;
                 case "safari":
-                    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-                        throw new WebDriverException("Your OS doesn't support Safari");
+                    if (!System.getProperty("os.name").toLowerCase().contains("mac")) throw new WebDriverException("Your OS doesn't support Safari");
                     WebDriverManager.getInstance(SafariDriver.class).setup();
-                    driver = new SafariDriver();
-                    driver.manage().window().maximize();
-                    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    driverPool.set(new SafariDriver());
+                    driverPool.get().manage().window().maximize();
+                    driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
                     break;
+                case "remote-chrome":
+                    // assign your grid server address
+                    String gridAdress = "localhost"; // put your own Linux grid IP here
+                    try {
+                        URL url = new URL("http://"+gridAdress+":4444/wd/hub");
+                        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                        desiredCapabilities.setBrowserName("chrome");
+                        driverPool.set(new RemoteWebDriver(url,desiredCapabilities));
+                        driverPool.get().manage().window().maximize();
+                        driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "saucelab-chrome":
+                    try{
+                        URL url = new URL("https://oauth-sdetoscar-844c8:66e7117f-390e-4556-8105-07af96a01f7a@ondemand.eu-central-1.saucelabs.com:443/wd/hub");
+                        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                        desiredCapabilities.setBrowserName("chrome");
+                        driverPool.set(new RemoteWebDriver(url,desiredCapabilities));
+                        driverPool.get().manage().window().maximize();
+                        driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    }catch (MalformedURLException e){
+                        e.printStackTrace();
+                    }
+
+                    break;
+                case "saucelab-edge":
+                    EdgeOptions browserOptions = new EdgeOptions();
+                    browserOptions.setCapability("platformName", "Windows 11");
+                    browserOptions.setCapability("browserVersion", "latest");
+                    Map<String, Object> sauceOptions = new HashMap<>();
+                    sauceOptions.put("build", "<your build id>");
+                    sauceOptions.put("name", "<your test name>");
+                    browserOptions.setCapability("sauce:options", sauceOptions);
+
+                    URL url = null;
+                    try {
+                        url = new URL("https://oauth-sdetoscar-844c8:66e7117f-390e-4556-8105-07af96a01f7a@ondemand.eu-central-1.saucelabs.com:443/wd/hub");
+                        driverPool.set(new RemoteWebDriver(url,browserOptions));
+                        driverPool.get().manage().window().maximize();
+                        driverPool.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+
             }
+
         }
 
-        return driver;
+        return driverPool.get();
 
     }
 
     /*
     This method will make sure our driver value is always null after using quit() method
      */
-    public static void closeDriver(){
-        if (driver != null){
-            driver.quit(); // this line will terminate the existing session. value will not even be null
-            driver = null;
+    public static void closeDriver() {
+
+        if (driverPool.get() != null){
+            driverPool.get().quit(); // this line will terminate the existing session. value will not even be null
+            driverPool.remove();
         }
+
     }
+/*    public static void close() {
+            driverPool.get().close(); // this line will terminate the existing session. value will not even be null
+            driverPool.remove();
+    }*/
+
+
 }

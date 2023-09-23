@@ -1,4 +1,4 @@
 package com.Adidas.pages;
 
-public class CartPage extends BasePage{
+public class CartPage extends BasePage {
 }
