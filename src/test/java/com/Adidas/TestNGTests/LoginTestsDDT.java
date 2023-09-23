@@ -7,15 +7,17 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class LoginTestsDDT extends TestBase {
-    LoginAndSignUpPage loginAndSignUpPage = new LoginAndSignUpPage();
+import java.util.Arrays;
 
+
+public class LoginTestsDDT extends TestBase {
 
     @DataProvider
     public Object[][] userData() {
-        ExcelUtil qa3short = new ExcelUtil("src/test/resources/DemoblazeTestData.xlsx", "QA1-all");
 
-        String[][] dataList = qa3short.getDataArrayWithoutFirstRow();
+        ExcelUtil qa1short = new ExcelUtil("src/test/resources/DemoblazeTestData.xlsx", "QA1-all");
+
+        String[][] dataList = qa1short.getDataArrayWithoutFirstRow();
 
         return dataList;
     }
@@ -31,13 +33,15 @@ public class LoginTestsDDT extends TestBase {
 
     public void loginFunctionTest(String username, String password) {
 
-        extentLogger = report.createTest("Login with valid credentials test");
+        LoginAndSignUpPage loginAndSignUpPage = new LoginAndSignUpPage();
+
+        extentLogger = report.createTest("Login test-username: ");
         System.out.println(username);
 
         extentLogger.info("User goes to login page");
         loginAndSignUpPage.navigateToModule("Log in");
 
-        extentLogger.info("Enter username and password");
+        extentLogger.info("User enters username and password");
         loginAndSignUpPage.login_userName.sendKeys(username);
         loginAndSignUpPage.login_password.sendKeys(password);
 
@@ -45,11 +49,9 @@ public class LoginTestsDDT extends TestBase {
         loginAndSignUpPage.login_button.click();
         BrowserUtils.waitFor(3);
 
-        extentLogger.info("Verify user login with valid credentials");
+        extentLogger.info("Verify user login with valid credentials or cannot login with invalid credentials");
         String expectedUser = "Welcome " + username;
         Assert.assertEquals(expectedUser, loginAndSignUpPage.nameOfUser.getText());
-
-        loginAndSignUpPage.logOut.click();
 
     }
 }

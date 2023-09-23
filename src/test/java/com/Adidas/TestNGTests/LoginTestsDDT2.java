@@ -15,10 +15,10 @@ public class LoginTestsDDT2 extends TestBase {
     public Object[][] testData(){
         String [][] data = {
                 {"testfortest","test"},
-                {"testfortest","test"},
                 {"testfortest","tests"},
-                {"testfortest","test"},
-
+                {"","tests"},
+                {"testtest","test"},
+                {"testtest",""},
         };
         return data;
     }
@@ -33,12 +33,12 @@ public class LoginTestsDDT2 extends TestBase {
 
     public void loginWithValidCredentials(String username, String password) {
 
-        extentLogger = report.createTest("Login with valid credentials test");
+        extentLogger = report.createTest("Login test");
 
         extentLogger.info("User goes to login page");
         loginAndSignUpPage.navigateToModule("Log in");
 
-        extentLogger.info("Enter valid username and password");
+        extentLogger.info("User enters username and password");
         loginAndSignUpPage.login_userName.sendKeys(username);
         loginAndSignUpPage.login_password.sendKeys(password);
 
@@ -46,11 +46,9 @@ public class LoginTestsDDT2 extends TestBase {
         loginAndSignUpPage.login_button.click();
         BrowserUtils.waitFor(3);
 
-        extentLogger.info("Verify user login with valid credentials");
+        extentLogger.info("Verify user login with valid credentials or cannot login with invalid credentials");
         String expectedUser = "Welcome " + username;
         Assert.assertEquals(expectedUser, loginAndSignUpPage.nameOfUser.getText());
-
-        loginAndSignUpPage.logOut.click();
 
     }
 }
