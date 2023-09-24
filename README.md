@@ -1,6 +1,6 @@
 # MyAutomationProject
 
-Here you can find some test examples for "https://demoblaze.com/" which is an e-commerce website.
+Here you can find some test examples for https://demoblaze.com/ which is an e-commerce website.
 
 I have worked with MAVEN as a build management tool.
 
