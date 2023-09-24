@@ -6,7 +6,8 @@ import com.Adidas.utilities.ConfigurationReader;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.testng.Assert;
+import org.junit.Assert;
+
 public class LoginStepDefs {
     LoginAndSignUpPage loginAndSignUpPage = new LoginAndSignUpPage();
 
