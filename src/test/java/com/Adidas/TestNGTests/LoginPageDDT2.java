@@ -7,9 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-
-public class LoginTestsDDT2 extends TestBase {
+public class LoginPageDDT2 extends TestBase {
 
     LoginAndSignUpPage loginAndSignUpPage = new LoginAndSignUpPage();
 

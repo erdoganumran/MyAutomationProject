@@ -1,16 +1,16 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 
-<suite name="VyTrack Automation" verbose="1">
-    <test name="Vytrack Smoke Test">
+<suite name="Demoblaze Automation" verbose="1">
+    <test name="Demoblaze Smoke Test">
         <classes>
-            <class name="com.Adidas.TestNGTests.LoginTests">
+            <class name="com.Adidas.TestNGTests.LoginPage">
                 <methods>
-                    <include name="wrongPasswordTest"></include>
+                    <include name="loginWithInvalidPassword"></include>
                 </methods>
             </class>
-            <class name="com.Adidas.TestNGTests.LoginTestsDDT">
+            <class name="com.Adidas.TestNGTests.LoginPageDDT">
                 <methods>
-                <exclude name="wrongUserNameTest"></exclude>
+                <exclude name="notLoginWithoutClicking"></exclude>
             </methods>
             </class>
         </classes>

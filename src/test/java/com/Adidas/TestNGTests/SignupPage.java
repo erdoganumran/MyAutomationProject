@@ -8,7 +8,7 @@ import org.openqa.selenium.Alert;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class SignupTests extends TestBase {
+public class SignupPage extends TestBase {
 
     LoginAndSignUpPage loginAndSignUpPage=new LoginAndSignUpPage();
 

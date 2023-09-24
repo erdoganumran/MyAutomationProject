@@ -8,10 +8,8 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 
-
-public class LoginTestsDDT extends TestBase {
+public class LoginPageDDT extends TestBase {
 
     @DataProvider
     public Object[][] userData() {

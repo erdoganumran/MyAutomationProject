@@ -14,7 +14,7 @@ public class Hooks {
 
     @Before()
     public void setUp(){
-        System.out.println("\tthis is coming from before hook");
+        System.out.println("\tThis is coming from before hook");
         Driver.get().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         Driver.get().manage().window().maximize();
 
@@ -28,7 +28,7 @@ public class Hooks {
         }
 
        Driver.closeDriver();
-        System.out.println("After hook close driver");
+        System.out.println("\tAfter hook close driver");
     }
 
     @Before("@db")

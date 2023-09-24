@@ -9,10 +9,10 @@ import org.junit.runner.RunWith;
         plugin = {"json:target/cucumber.json",
                 "html:target/default-html-reports",
                 "rerun:target/rerun.txt"},
-        features = "src/test/resources/demoblaze_features",
-        glue = "com/Adidas/stepdefs/demoblaze_step_definitions",
+        features = "src/test/resources/features",
+        glue = "com/Adidas/stepdefs",
         dryRun = false,
-        tags ="@smoke"
+        tags ="@purchase"
 
         // tags = "@driver and @VYT-123 and @wip"
         //tags = "@driver or @store_manager"
@@ -25,6 +25,6 @@ import org.junit.runner.RunWith;
         //tags = "not @wip"
         //tags = "@driver and @VYT-123 and @wip"
 )
-public class DemoblazeCukesRunner {
+public class CukesRunner {
 
 }
