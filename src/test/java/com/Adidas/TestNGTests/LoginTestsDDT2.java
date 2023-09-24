@@ -2,9 +2,12 @@ package com.Adidas.TestNGTests;
 
 import com.Adidas.pages.LoginAndSignUpPage;
 import com.Adidas.utilities.BrowserUtils;
+import com.Adidas.utilities.ConfigurationReader;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
 
 public class LoginTestsDDT2 extends TestBase {
 
@@ -24,16 +27,15 @@ public class LoginTestsDDT2 extends TestBase {
     }
 
     /**
-     * @US2_LOG1 open the chrome and login page
-     * login with valid credentials
-     * user should be able to login successfully
+     * @US2: open the chrome and login page
+     * login with valid and invalid credentials
      */
 
     @Test(dataProvider =  "testData")
 
-    public void loginWithValidCredentials(String username, String password) {
+    public void loginFunctionTest(String username, String password) {
 
-        extentLogger = report.createTest("Login test");
+        extentLogger = report.createTest("Login test: "+ username);
 
         extentLogger.info("User goes to login page");
         loginAndSignUpPage.navigateToModule("Log in");
@@ -46,9 +48,14 @@ public class LoginTestsDDT2 extends TestBase {
         loginAndSignUpPage.login_button.click();
         BrowserUtils.waitFor(3);
 
-        extentLogger.info("Verify user login with valid credentials or cannot login with invalid credentials");
-        String expectedUser = "Welcome " + username;
-        Assert.assertEquals(expectedUser, loginAndSignUpPage.nameOfUser.getText());
 
+        if (username.equals(ConfigurationReader.get("username")) && password.equals(ConfigurationReader.get("password"))){
+            extentLogger.info("Verify user login with valid credentials");
+            String expectedUser= "Welcome " + ConfigurationReader.get("username");
+            Assert.assertEquals(expectedUser, loginAndSignUpPage.nameOfUser.getText());
+        }else {
+            extentLogger.info("Verify user cannot login with invalid credentials");
+            Assert.assertFalse(loginAndSignUpPage.nameOfUser.isDisplayed());
+        }
     }
 }

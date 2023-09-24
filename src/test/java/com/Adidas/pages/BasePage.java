@@ -2,6 +2,7 @@ package com.Adidas.pages;
 
 import com.Adidas.utilities.Driver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -10,7 +11,7 @@ public abstract class BasePage {
 
     public BasePage() { PageFactory.initElements(Driver.get(), this); }
 
-    @FindBy(partialLinkText = "Home ")
+    @FindBy(css = ".nav-item.active>a")
     public WebElement home;
 
     @FindBy(css = "#login2")
@@ -44,9 +45,13 @@ public abstract class BasePage {
 
     //Navigate the module
     public void navigateToModule(String module){
-        Driver.get().findElement(By.linkText(module)).click();
-    }
 
+        try {
+            Driver.get().findElement(By.linkText(module)).click();
+        }catch (StaleElementReferenceException s){
+            System.out.println("Stale Element Exception");
+        }
+    }
 
 
 }

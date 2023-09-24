@@ -1,5 +1,6 @@
 package com.Adidas.pages;
 
+import com.Adidas.utilities.ConfigurationReader;
 import com.Adidas.utilities.Driver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -35,5 +36,10 @@ public class LoginAndSignUpPage extends BasePage {
     @FindBy(xpath = "//*[@id=\"logout2\"]")
     public WebElement logOut;
 
-
+    public void login(){
+        navigateToModule("Log in");
+        login_userName.sendKeys(ConfigurationReader.get("username"));
+        login_password.sendKeys(ConfigurationReader.get("password"));
+        login_button.click();
+    }
 }

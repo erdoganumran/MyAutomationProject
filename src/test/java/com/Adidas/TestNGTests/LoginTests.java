@@ -46,7 +46,6 @@ public class LoginTests extends TestBase {
         String expectedUser= "Welcome " + ConfigurationReader.get("username");
         Assert.assertEquals(expectedUser, loginAndSignUpPage.nameOfUser.getText());
 
-
     }
 
     /**

@@ -2,6 +2,7 @@ package com.Adidas.TestNGTests;
 
 import com.Adidas.pages.LoginAndSignUpPage;
 import com.Adidas.utilities.BrowserUtils;
+import com.Adidas.utilities.ConfigurationReader;
 import com.Adidas.utilities.ExcelUtil;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -14,19 +15,15 @@ public class LoginTestsDDT extends TestBase {
 
     @DataProvider
     public Object[][] userData() {
-
         ExcelUtil qa1short = new ExcelUtil("src/test/resources/DemoblazeTestData.xlsx", "QA1-all");
-
         String[][] dataList = qa1short.getDataArrayWithoutFirstRow();
-
         return dataList;
     }
 
 
 /**
-     * @US2_LOG1 open the chrome and login page
-     * login with valid credentials
-     * user should be able to login successfully
+     * @US2: open the chrome and login page
+     * login with valid and invalid credentials
      */
 
     @Test(dataProvider = "userData")
@@ -35,7 +32,7 @@ public class LoginTestsDDT extends TestBase {
 
         LoginAndSignUpPage loginAndSignUpPage = new LoginAndSignUpPage();
 
-        extentLogger = report.createTest("Login test-username: ");
+        extentLogger = report.createTest("Login test: "+ username);
         System.out.println(username);
 
         extentLogger.info("User goes to login page");
@@ -49,9 +46,15 @@ public class LoginTestsDDT extends TestBase {
         loginAndSignUpPage.login_button.click();
         BrowserUtils.waitFor(3);
 
-        extentLogger.info("Verify user login with valid credentials or cannot login with invalid credentials");
-        String expectedUser = "Welcome " + username;
-        Assert.assertEquals(expectedUser, loginAndSignUpPage.nameOfUser.getText());
-
+        if (username.equals(ConfigurationReader.get("username")) && password.equals(ConfigurationReader.get("password"))){
+            extentLogger.info("Verify user login with valid credentials");
+            String expectedUser= "Welcome " + ConfigurationReader.get("username");
+            Assert.assertEquals(expectedUser, loginAndSignUpPage.nameOfUser.getText());
+        }else {
+            extentLogger.info("Verify user cannot login with invalid credentials");
+            Assert.assertFalse(loginAndSignUpPage.nameOfUser.isDisplayed());
+        }
     }
+
+
 }
